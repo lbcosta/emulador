@@ -10,5 +10,5 @@ class Parser:
             f"^(inc)\s+({reg}|{mem})$", #inc
             f"^(imul)\s+({reg}|{mem}),\s+({reg}|{mem}|{num}),\s+({reg}|{mem}|{num})$" #imul
         ]
-        tests = [True if re.match(expression, input_string) else False for expression in expressions]
+        tests = [re.match(expression, input_string) for expression in expressions]
         return any(tests)
