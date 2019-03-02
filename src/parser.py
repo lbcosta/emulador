@@ -11,4 +11,9 @@ class Parser:
             f"^(imul)\s+({reg}|{mem}),\s+({reg}|{mem}|{num}),\s+({reg}|{mem}|{num})$" #imul
         ]
         tests = [re.match(expression, input_string) for expression in expressions]
-        return any(tests)
+        valid_test = list(filter(lambda test: test != None, tests))
+        if(len(valid_test) != 0):
+            parameters = valid_test[0].groups()
+            return parameters
+        else:
+            raise SyntaxError('Comando inválido!')
