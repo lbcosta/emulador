@@ -1,7 +1,13 @@
 from parser import Parser
+from encoder import Encoder
+
+arch = 16
 
 parser = Parser()
+encoder = Encoder(arch)
 
-input = "add E, 1"
+instr = "add 0x00A, 17"
 
-print(parser.parse(input))
+params = parser.parse(instr)
+encoding = encoder.encode(params)
+print(encoding)

@@ -3,7 +3,7 @@ class Parser:
     def parse(self, input_string):
         reg = "[A-Z]" #Registradores = Qualquer letra
         num = "\d+" #Numeros inteiros = Qualquer numero
-        mem = "0x\d+" #Espaço de Memoria = 0x(Qualquer numero)
+        mem = "0[xX][0-9a-fA-F]+" #Espaço de Memoria = 0x(Qualquer numero)
         expressions = [
             f"^(mov)\s+({reg}),\s+({num})$", #mov
             f"^(add)\s+({reg}|{mem}),\s+({reg}|{num})$", #add
@@ -14,6 +14,6 @@ class Parser:
         valid_test = list(filter(lambda test: test != None, tests))
         if(len(valid_test) != 0):
             parameters = valid_test[0].groups()
-            return parameters
+            return list(parameters)
         else:
             raise SyntaxError('Comando inválido!')
