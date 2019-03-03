@@ -4,17 +4,17 @@ class Encoder():
     def __init__(self, arch):
         self.arch = arch
 
-    def conversion(self, param):
-        param_bin = np.binary_repr(param).zfill(self.arch)
-        lista_de_bytes = self.byte_chunks(param_bin)
-        lista_de_bytes = [np.uint8(byte) for byte in lista_de_bytes]
-        return lista_de_bytes
+    def get_bytes(self, word):
+        mask = 0xFF
+        param_bytes = []
+        number_of_bytes = self.arch//8
 
+        for _ in range(0,number_of_bytes):
+            byte = np.uint8(word & mask)
+            param_bytes.append(byte)
+            word = word >> 8
 
-    def byte_chunks(self, bin_str):
-        for i in range(0, len(bin_str), 8):
-            yield bin_str[i:i + 8]
-
+        return param_bytes[::-1]
 
     def encode(self, params):
         opcode = params[0]
@@ -25,30 +25,44 @@ class Encoder():
             'imul' : 104
         }
 
-        for idx, param in enumerate(params):
+        encoded_params = []
+
+        for param in params:
             if param in opcode_mapping:
-                params[0] = opcode_mapping[opcode]
+                encoded_params.append(opcode_mapping[opcode])
             elif param[:2] == '0x':
-                params[idx] = int(param,16)
+                encoded_params.append(int(param,16))
             elif re.search('[A-Z]', param):
-                params[idx] = ord(param)
+                encoded_params.append(ord(param))
             else:
-                params[idx] = int(param)
-            params[idx] = self.conversion(params[idx])
+                encoded_params.append(int(param))
 
-        
-        return params
+        param_bytes = []
+        for param in encoded_params:
+            if self.arch == 8:
+                word = np.uint8(word)
+            elif self.arch == 16:
+                word = np.uint16(param)
+            elif self.arch == 32:
+                word = np.uint32(param)
+            else:
+                word = np.uint64(param)
+            byte_list = self.get_bytes(word)
+            param_bytes.append(byte_list)
 
-            # if self.arch == 8:
-            #     param_bin = np.binary_repr(param).zfill(8)
-            #     return [np.uint8(param) for param in params]
-            # elif self.arch == 16:
-            #     param_bin = np.binary_repr(param).zfill(16)
-            #     return [np.uint16(param) for param in params]
-            # elif self.arch == 32:
-            #     param_bin = np.binary_repr(param).zfill(32)
-            #     return [np.uint32(param) for param in params]
-            # else:
-            #     param_bin = np.binary_repr(param).zfill(64)
-            #     return [np.uint64(param) for param in params]
+        return param_bytes
 
+
+# DECODER:
+# import numpy as np
+# num16 = np.uint16(0xAAFF) # = 60000
+# lsb = np.uint8(num16 & 0xFF) #Pega o mais significativo
+# msb = np.uint8(num16 >> 8) #Pega o menos significativo
+# print(f'Palavra: {num16} | Bytes que ocupa: {num16.itemsize}')
+# print(f'MSB: {msb} | Bytes que ocupa: {msb.itemsize}')
+# print(f'LSB: {lsb} | Bytes que ocupa: {lsb.itemsize}')
+# byte_mais_alto = np.uint16(msb) #Guarda byte mais alto em var de 16bits
+# print(f'Byte mais alto em 16 bits:{byte_mais_alto}')
+# byte_mais_alto_shift = byte_mais_alto << 8 #Shift 8 bits para esquerda
+# print(f'Byte mais alto shiftado: {byte_mais_alto_shift}')
+# print(f'Soma: {byte_mais_alto_shift | lsb}') #OU com o menos significativo

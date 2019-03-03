@@ -1,7 +1,7 @@
 import re 
 class Parser:
     def parse(self, input_string):
-        reg = "[A-Z]" #Registradores = Qualquer letra
+        reg = "[A-Z]" #Registradores = Qualquer letra maiuscula
         num = "\d+" #Numeros inteiros = Qualquer numero
         mem = "0[xX][0-9a-fA-F]+" #Espaço de Memoria = 0x(Qualquer numero)
         expressions = [
