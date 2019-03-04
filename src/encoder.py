@@ -37,10 +37,10 @@ class Encoder():
             else:
                 encoded_params.append(int(param))
 
-        param_bytes = []
+        byte_pairs = []
         for param in encoded_params:
             if self.arch == 8:
-                word = np.uint8(word)
+                word = np.uint8(param)
             elif self.arch == 16:
                 word = np.uint16(param)
             elif self.arch == 32:
@@ -48,10 +48,30 @@ class Encoder():
             else:
                 word = np.uint64(param)
             byte_list = self.get_bytes(word)
-            param_bytes.append(byte_list)
+            byte_pairs.append(byte_list)
 
-        return param_bytes
+        return byte_pairs
 
+    # def shift_sum(self, byte_list, conversion_function):
+    #     shifts = (self.arch // 8) - 1
+    #     definitive_word = conversion_function(0)
+    #     for byte in byte_list:
+    #         word = conversion_function(byte)
+    #         for _ in range(0,shifts):
+    #             word = word << 8
+    #         shifts -= 1
+    #         definitive_word = definitive_word | word
+    #     return definitive_word
+
+    # def decode(self, byte_list):
+    #     if self.arch == 8:
+    #         return self.shift_sum(byte_list, np.uint8)
+    #     elif self.arch == 16:
+    #         return self.shift_sum(byte_list, np.uint16)
+    #     elif self.arch == 32:
+    #         return self.shift_sum(byte_list, np.uint32)
+    #     else:
+    #         return self.shift_sum(byte_list, np.uint64)
 
 # DECODER:
 # import numpy as np
