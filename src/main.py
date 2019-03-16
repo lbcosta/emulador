@@ -1,7 +1,7 @@
 from parser import Parser
 from encoder import Encoder
 import numpy as np 
-arch = 64
+arch = 32
 
 parser = Parser()
 encoder = Encoder(arch)

@@ -1,18 +1,20 @@
 import numpy as np
 import re
+from functools import reduce
+
 class Encoder():
     def __init__(self, arch):
         self.arch = arch
 
     def get_bytes(self, word):
-        mask = 0xFF
+        mask = np.uint8(0xFF)
         param_bytes = []
         number_of_bytes = self.arch//8
 
         for _ in range(0,number_of_bytes):
             byte = np.uint8(word & mask)
             param_bytes.append(byte)
-            word = word >> 8
+            word = word >> np.uint8(8)
 
         return param_bytes[::-1]
 
@@ -49,8 +51,8 @@ class Encoder():
                 word = np.uint64(param)
             byte_list = self.get_bytes(word)
             byte_pairs.append(byte_list)
-
-        return byte_pairs
+        
+        return reduce(lambda x, y: x + y, byte_pairs)
 
     # def shift_sum(self, byte_list, conversion_function):
     #     shifts = (self.arch // 8) - 1

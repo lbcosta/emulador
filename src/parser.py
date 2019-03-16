@@ -1,14 +1,14 @@
 import re 
 class Parser:
     def parse(self, input_string):
-        reg = "[A-Z]" #Registradores = Qualquer letra maiuscula
-        num = "\d+" #Numeros inteiros = Qualquer numero
-        mem = "0[xX][0-9a-fA-F]+" #Espaço de Memoria = 0x(Qualquer numero)
+        reg = r"[A-Z]" #Registradores = Qualquer letra maiuscula
+        num = r"\d+" #Numeros inteiros = Qualquer numero
+        mem = r"0[xX][0-9a-fA-F]+" #Espaço de Memoria = 0x(Qualquer numero)
         expressions = [
-            f"^(mov)\s+({reg}),\s+({num})$", #mov
-            f"^(add)\s+({reg}|{mem}),\s+({reg}|{num})$", #add
-            f"^(inc)\s+({reg}|{mem})$", #inc
-            f"^(imul)\s+({reg}|{mem}),\s+({reg}|{mem}|{num}),\s+({reg}|{mem}|{num})$" #imul
+            rf"^(mov)\s+({reg}),\s+({num})$", #mov
+            rf"^(add)\s+({reg}|{mem}),\s+({reg}|{num})$", #add
+            rf"^(inc)\s+({reg}|{mem})$", #inc
+            rf"^(imul)\s+({reg}|{mem}),\s+({reg}|{mem}|{num}),\s+({reg}|{mem}|{num})$" #imul
         ]
         tests = [re.match(expression, input_string) for expression in expressions]
         valid_test = list(filter(lambda test: test != None, tests))
