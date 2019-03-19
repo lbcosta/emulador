@@ -1,9 +1,9 @@
 import re 
 class Parser:
     def parse(self, instr):
-        regis = r"[A-Z]" #Registradores = Qualquer letra maiuscula
+        regis = r"[ABCD]" #Registradores = Qualquer letra maiuscula
         numbr = r"\d+" #Numeros inteiros = Qualquer numero
-        memm = r"0[xX][0-9a-fA-F]+" #Espaço de memoria = 0x(Qualquer numero)
+        memm = r"0x[0-9a-f]{,2}" #Espaço de memoria = 0x(Qualquer numero de 00 a ff)
         patterns = [
             rf"^(mov)\s+({regis}),\s+({numbr})$", #mov
             rf"^(add)\s+({regis}|{memm}),\s+({regis}|{numbr})$", #add

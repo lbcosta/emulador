@@ -4,12 +4,12 @@ from functools import reduce
 
 class Encoder():
     def __init__(self, arch):
-        self.arch = arch
+        self.__arch = arch
 
     def get_bytes(self, word):
         mask = np.uint8(0xFF)
         word_bytes = []
-        number_of_bytes = self.arch // 8
+        number_of_bytes = self.__arch // 8
 
         for _ in range(0,number_of_bytes):
             byte = np.uint8(word & mask)
@@ -41,11 +41,11 @@ class Encoder():
 
         byte_groups = []
         for param in encoded_params:
-            if self.arch == 8:
+            if self.__arch == 8:
                 word = np.uint8(param)
-            elif self.arch == 16:
+            elif self.__arch == 16:
                 word = np.uint16(param)
-            elif self.arch == 32:
+            elif self.__arch == 32:
                 word = np.uint32(param)
             else:
                 word = np.uint64(param)

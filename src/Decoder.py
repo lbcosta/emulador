@@ -2,10 +2,10 @@ import numpy as np
 
 class Decoder():
     def __init__(self, arch):
-        self.arch = arch
+        self.__arch = arch
 
     def shift_sum(self, byte_list, conversion_function):
-        shifts = (self.arch // 8) - 1
+        shifts = (self.__arch // 8) - 1
         definitive_word = conversion_function(0)
         for byte in byte_list:
             word = conversion_function(byte)
@@ -25,11 +25,11 @@ class Decoder():
 
         params = []
         for instr in byte_instr:
-            if self.arch == 8:
+            if self.__arch == 8:
                 params.append(self.shift_sum(instr, np.uint8))
-            elif self.arch == 16:
+            elif self.__arch == 16:
                 params.append(self.shift_sum(instr, np.uint16))
-            elif self.arch == 32:
+            elif self.__arch == 32:
                 params.append(self.shift_sum(instr, np.uint32))
             else:
                 params.append(self.shift_sum(instr, np.uint64))
