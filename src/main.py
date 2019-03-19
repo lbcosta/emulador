@@ -1,18 +1,30 @@
-from parser import Parser
-from encoder import Encoder
+from Parser import Parser
+from Encoder import Encoder
+from Bus import Bus
+from IO import IO
+from RAM import RAM
+from CPU import CPU
+
 import numpy as np 
-arch = 32
+arch = 64
 
 parser = Parser()
 encoder = Encoder(arch)
 
-instr = "add 0x111, 280"
+instr = "mov A, 2"
 
 params = parser.parse(instr)
 encoding = encoder.encode(params)
-print(encoding)
 
-# print(encoder.decode(encoding[0]))
+bus = Bus()
+io = IO(bus)
+ram = RAM(bus)
+cpu = CPU(bus, arch)
+bus.observers = {'RAM_WRITE':ram.write,'RAM_READ':ram.read,'CPU_INTRPT':cpu.interruption,'CPU_PROCESS':cpu.process}
+
+io.new_input(encoding)
+
+
 # print('Decoding:\n')
 # for byteArray in encoding:
 #     msb = byteArray[0]
