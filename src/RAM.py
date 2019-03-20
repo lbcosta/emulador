@@ -17,5 +17,11 @@ class RAM():
             instr.append(relative_addr)
         return instr
 
+    def get_value(self, key):
+        return self.__memory[key]
+
+    def set_value(self, key, value):
+        self.__memory[key] = value
+
     def pointer(self):
         return self.__pointer

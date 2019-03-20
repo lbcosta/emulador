@@ -34,6 +34,7 @@ class Decoder():
             else:
                 params.append(self.shift_sum(instr, np.uint64))
         
+        #TODO: TRATAMENTO DAS OUTRAS OPERAÇÕES ALÉM DO "MOV REG, NUM"
         params[0] = opcode_reverse_mapping[params[0]]
         params[1] = chr(params[1])
         return params

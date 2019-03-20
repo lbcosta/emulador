@@ -1,3 +1,0 @@
-mov A, 2
-mov B, 4
-mov C, 10

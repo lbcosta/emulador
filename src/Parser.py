@@ -5,7 +5,7 @@ class Parser:
         numbr = r"\d+" #Numeros inteiros = Qualquer numero
         memm = r"0x[0-9a-f]{,2}" #Espaço de memoria = 0x(Qualquer numero de 00 a ff)
         patterns = [
-            rf"^(mov)\s+({regis}),\s+({numbr})$", #mov
+            rf"^(mov)\s+({regis}|{memm}),\s+({numbr})$", #mov
             rf"^(add)\s+({regis}|{memm}),\s+({regis}|{numbr})$", #add
             rf"^(inc)\s+({regis}|{memm})$", #inc
             rf"^(imul)\s+({regis}|{memm}),\s+({regis}|{memm}|{numbr}),\s+({regis}|{memm}|{numbr})$" #imul
