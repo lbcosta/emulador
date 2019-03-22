@@ -1,6 +1,5 @@
 import numpy as np
 import re
-from functools import reduce
 
 class Encoder():
     def __init__(self, arch):
@@ -32,12 +31,16 @@ class Encoder():
         for param in instr_params:
             if param in opcode_mapping:
                 encoded_params.append(opcode_mapping[opcode])
+                encoded_params.append(0)
             elif param[:2] == '0x':
                 encoded_params.append(int(param,16))
-            elif re.search('[A-Z]', param):
+                encoded_params.append(3)
+            elif re.search('[A-D]', param):
                 encoded_params.append(ord(param))
+                encoded_params.append(1)
             else:
                 encoded_params.append(int(param))
+                encoded_params.append(2)
 
         byte_groups = []
         for param in encoded_params:
@@ -52,18 +55,4 @@ class Encoder():
             byte_groups.append(self.get_bytes(word))
         
         return byte_groups
-        # return reduce(lambda x, y: x + y, byte_groups)
-
-# DECODER:
-# import numpy as np
-# num16 = np.uint16(0xAAFF) # = 60000
-# lsb = np.uint8(num16 & 0xFF) #Pega o mais significativo
-# msb = np.uint8(num16 >> 8) #Pega o menos significativo
-# print(f'Palavra: {num16} | Bytes que ocupa: {num16.itemsize}')
-# print(f'MSB: {msb} | Bytes que ocupa: {msb.itemsize}')
-# print(f'LSB: {lsb} | Bytes que ocupa: {lsb.itemsize}')
-# byte_mais_alto = np.uint16(msb) #Guarda byte mais alto em var de 16bits
-# print(f'Byte mais alto em 16 bits:{byte_mais_alto}')
-# byte_mais_alto_shift = byte_mais_alto << 8 #Shift 8 bits para esquerda
-# print(f'Byte mais alto shiftado: {byte_mais_alto_shift}')
-# print(f'Soma: {byte_mais_alto_shift | lsb}') #OU com o menos significativo
+        

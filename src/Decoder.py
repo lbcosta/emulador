@@ -33,9 +33,19 @@ class Decoder():
                 params.append(self.shift_sum(instr, np.uint32))
             else:
                 params.append(self.shift_sum(instr, np.uint64))
-        
-        #TODO: TRATAMENTO DAS OUTRAS OPERAÇÕES ALÉM DO "MOV REG, NUM"
-        #NUMEROS TEM QUE IR COMO INT
-        params[0] = opcode_reverse_mapping[params[0]]
-        params[1] = chr(params[1])
-        return params
+
+        conversions = {
+            0 : (lambda param: opcode_reverse_mapping[param]),
+            1 : (lambda param: chr(param)),
+            2 : (lambda param: int(param)),
+            3 : (lambda param: hex(param))
+        }
+
+        decoded_params = []
+        for idx, param in enumerate(params[::-1]):
+            if idx % 2 is 0:
+                conversion_code = int(param)
+            else:
+                decoded_params.append(conversions[conversion_code](param))
+
+        return decoded_params[::-1]

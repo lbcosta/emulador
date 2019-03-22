@@ -1,6 +1,3 @@
-from IO import IO
-from RAM import RAM
-from CPU import CPU
 
 class Bus():
     def __init__(self):

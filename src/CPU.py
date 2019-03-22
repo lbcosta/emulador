@@ -1,5 +1,5 @@
 from Decoder import Decoder
-from helper.PrintFormat import PrintFormat
+from helpers.PrintFormat import PrintFormat
 
 class CPU():
     def __init__(self, bus, arch):
@@ -13,6 +13,7 @@ class CPU():
             'D': None,
         }
         self.__instr_pointer = None
+        
         print(f'>> State:       {self.__registers}')
 
 
@@ -23,16 +24,17 @@ class CPU():
     def process(self, info):
         instr = self.__decoder.decode(info)
 
-        #TODO: TRATAMENTO DAS OUTRAS OPERAÇÕES ALÉM DO "MOV REG, NUM"
         print(f'>> Executing:   {PrintFormat.format(instr)}')
+        
         if instr[0] == 'mov':
             self.__mov(instr[1], instr[2])
         elif instr[0] == 'add':
-            self.__mov(instr[1], instr[2])
+            self.__add(instr[1], instr[2])
         elif instr[0] == 'inc':
             self.__inc(instr[1])
         else:
             self.__imul(instr[1], instr[2], instr[3])
+
         print(f'>> State:       {self.__registers}')
 
     def __mov(self, target_key, value):
@@ -48,7 +50,11 @@ class CPU():
             self.__registers[acc_key] += addend
 
     def __inc(self, target):
-        self.__registers[target] += 1
+        if self.__registers[target] is None:    
+            self.__registers[target] = 1
+        else:
+            self.__registers[target] += 1
+
 
     def __imul(self, acc_key, factor1, factor2):
         if factor1 in self.__registers:
