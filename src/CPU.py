@@ -1,4 +1,5 @@
 from Decoder import Decoder
+from helper.PrintFormat import PrintFormat
 
 class CPU():
     def __init__(self, bus, arch):
@@ -12,7 +13,7 @@ class CPU():
             'D': None,
         }
         self.__instr_pointer = None
-        print(f'>> {self.__registers}')
+        print(f'>> State:       {self.__registers}')
 
 
     def interruption(self, op, addr, info_size):
@@ -23,18 +24,40 @@ class CPU():
         instr = self.__decoder.decode(info)
 
         #TODO: TRATAMENTO DAS OUTRAS OPERAÇÕES ALÉM DO "MOV REG, NUM"
-        print(f'>> {instr[0]} {instr[1]}, {instr[2]}')
-        self.__mov(instr[1], instr[2])
-        print(f'>> {self.__registers}')
+        print(f'>> Executing:   {PrintFormat.format(instr)}')
+        if instr[0] == 'mov':
+            self.__mov(instr[1], instr[2])
+        elif instr[0] == 'add':
+            self.__mov(instr[1], instr[2])
+        elif instr[0] == 'inc':
+            self.__inc(instr[1])
+        else:
+            self.__imul(instr[1], instr[2], instr[3])
+        print(f'>> State:       {self.__registers}')
 
     def __mov(self, target_key, value):
-        self.__registers[target_key] = value
+        if value in self.__registers:
+            self.__registers[target_key] = self.__registers[value]
+        else:
+            self.__registers[target_key] = value
 
     def __add(self, acc_key, addend):
-        pass
+        if addend in self.__registers:
+            self.__registers[acc_key] += self.__registers[addend]
+        else:
+            self.__registers[acc_key] += addend
 
     def __inc(self, target):
-        pass
+        self.__registers[target] += 1
 
-    def __imul(self, acc, factor1, factor2):
-        pass
+    def __imul(self, acc_key, factor1, factor2):
+        if factor1 in self.__registers:
+            if factor2 in self.__registers:
+                self.__registers[acc_key] = self.__registers[factor1] * self.__registers[factor2]
+            else:
+                self.__registers[acc_key] = self.__registers[factor1] * factor2
+        else:
+            if factor2 in self.__registers:
+                self.__registers[acc_key] = factor1 * self.__registers[factor2]
+            else:
+                self.__registers[acc_key] = factor1 * factor2

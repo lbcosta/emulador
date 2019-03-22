@@ -2,7 +2,7 @@ class RAM():
     def __init__(self, bus):
         self.__bus = bus
         self.__pointer = '0x0'
-        self.__memory = {hex(i) : [] for i in range(0,256)}
+        self.__memory = {hex(i) : None for i in range(0,256)}
 
     def write(self, op, instr, addr, info_size):
         if op == 'w':
@@ -17,11 +17,11 @@ class RAM():
             instr.append(relative_addr)
         return instr
 
-    def get_value(self, key):
-        return self.__memory[key]
+    # def get_value(self, key):
+    #     return self.__memory[key]
 
-    def set_value(self, key, value):
-        self.__memory[key] = value
+    # def set_value(self, key, value):
+    #     self.__memory[key] = value
 
     def pointer(self):
         return self.__pointer

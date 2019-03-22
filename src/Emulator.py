@@ -22,8 +22,8 @@ class Emulator():
                 'RAM_WRITE':self.__ram.write,
                 'RAM_READ':self.__ram.read,
                 'RAM_PTR': self.__ram.pointer,
-                'RAM_GET': self.__ram.get_value,
-                'RAM_SET': self.__ram.set_value,
+                # 'RAM_GET': self.__ram.get_value,
+                # 'RAM_SET': self.__ram.set_value,
                 'CPU_INTRPT':self.__cpu.interruption,
                 'CPU_PROCESS':self.__cpu.process
             }
