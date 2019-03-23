@@ -1,22 +1,32 @@
-class PrintFormat():
-
-    @staticmethod
-    def format(instr):
-        operands = instr[1:]
-        instr_str = instr[0] + ' '
-        for idx, operand in enumerate(operands):
-            if idx == (len(instr) - 2):
-                instr_str += str(operand)
-            else:
-                instr_str += str(operand) + ', '
-        return instr_str
-
-    @staticmethod
-    def non_empty_dict(dictionary):
-        d_copy = dictionary.copy()
-        for key, value in dict(d_copy).items():
-            if value is 0 or isinstance(value, list):
-                del d_copy[key]
-        return d_copy
+def instruction_format(instr):
+    operands = instr[1:]
+    instr_str = instr[0] + ' '
+    for idx, operand in enumerate(operands):
+        if idx == (len(instr) - 2):
+            instr_str += str(operand)
+        else:
+            instr_str += str(operand) + ', '
+    return instr_str
 
 
+def no_empty_format(dictionary):
+    d_copy = dictionary.copy()
+    for key, value in dict(d_copy).items():
+        if value is 0 or isinstance(value, list):
+            del d_copy[key]
+    return str(d_copy)
+
+
+def color_format(content, color_style):
+    colors = {
+        "PURPLE" : "\033[95m",
+        "ORANGE" : "\033[94m",
+        "GREEN" : "\033[92m",
+        "YELLOW" : "\033[93m",
+        "RED" : "\033[91m",
+        "ENDC" : "\033[0m",
+        "BOLD" : "\033[1m",
+        "UNDERLINE" : "\033[4m"
+    }
+
+    return colors[color_style] + str(content) + colors["ENDC"]

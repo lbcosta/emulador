@@ -1,11 +1,12 @@
-from helpers.PrintFormat import PrintFormat
+from helpers.PrintFormat import no_empty_format, color_format
 
 class RAM():
     def __init__(self, bus):
         self.__bus = bus
         self.__pointer = '0x0'
         self.__memory = {hex(i) : 0 for i in range(0,256)}
-        print(f'>> RAM State:   {PrintFormat.non_empty_dict(self.__memory)}')
+        print(color_format(">> RAM State:   ", "ORANGE"), end='')
+        print(color_format(no_empty_format(self.__memory), "ORANGE"))
 
     def write(self, op, instr, addr, info_size):
         if op == 'w':
@@ -25,7 +26,8 @@ class RAM():
 
     def set_value(self, key, value):
         self.__memory[key] = value
-        print(f'>> RAM State:   {PrintFormat.non_empty_dict(self.__memory)}')
+        print(color_format(">> RAM State:   ", "ORANGE"), end='')
+        print(color_format(no_empty_format(self.__memory), "ORANGE"))
 
     def pointer(self):
         return self.__pointer

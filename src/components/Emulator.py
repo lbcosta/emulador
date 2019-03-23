@@ -1,16 +1,17 @@
-from Parser import Parser
-from Encoder import Encoder
-from Bus import Bus
-from IO import IO
-from RAM import RAM
-from CPU import CPU
+from components.Parser import Parser
+from components.Encoder import Encoder
+from components.Bus import Bus
+from components.IO import IO
+from components.RAM import RAM
+from components.CPU import CPU
+from helpers.PrintFormat import color_format
 
 class Emulator():
     def __init__(self, arch):
-        if arch not in (8, 16, 32, 64):
-            raise ValueError('Arquitetura inválida!')
+        if int(arch) not in (8, 16, 32, 64):
+            raise ValueError(color_format('Arquitetura inválida!',"RED"))
         else:
-            self.__arch = arch
+            self.__arch = int(arch)
             self.__parser = Parser()
             self.__encoder = Encoder(self.__arch)
             self.__bus = Bus()

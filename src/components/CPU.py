@@ -1,5 +1,5 @@
-from Decoder import Decoder
-from helpers.PrintFormat import PrintFormat
+from components.Decoder import Decoder
+from helpers.PrintFormat import color_format, instruction_format
 
 class CPU():
     def __init__(self, bus, arch):
@@ -14,7 +14,8 @@ class CPU():
         }
         self.__instr_pointer = 0
         
-        print(f'>> CPU State:   {self.__registers}')
+        print(color_format(">> CPU State:   ", "PURPLE"), end='')
+        print(color_format(self.__registers, "PURPLE"))
 
 
     def interruption(self, op, addr, info_size):
@@ -23,7 +24,8 @@ class CPU():
 
     def process(self, info):
         instr = self.__decoder.decode(info)
-        print(f'>> Executing:   {PrintFormat.format(instr)}')
+        
+        print(color_format(f'>> Executing:   {instruction_format(instr)}', "BOLD"))
 
         operable_instr = [instr.pop(0)] 
         operable_instr += self.__operand_conversion(instr)
@@ -37,7 +39,8 @@ class CPU():
         else:
             self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
 
-        print(f'>> CPU State:   {self.__registers}')
+        print(color_format(">> CPU State:   ", "PURPLE"), end='')
+        print(color_format(self.__registers, "PURPLE"))
 
     def __operand_conversion(self, operands):
         converted_operands = []
