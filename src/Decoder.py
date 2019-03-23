@@ -37,7 +37,7 @@ class Decoder():
         conversions = {
             0 : (lambda param: opcode_reverse_mapping[param]),
             1 : (lambda param: chr(param)),
-            2 : (lambda param: int(param)),
+            2 : (lambda param: str(param)),
             3 : (lambda param: hex(param))
         }
 

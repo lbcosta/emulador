@@ -3,8 +3,8 @@ class Parser:
     def parse(self, instr):
         regis = r"[A-D]" #Registradores = Qualquer letra maiuscula
         numbr = r"\d+" #Numeros inteiros = Qualquer numero
-        # memm = r"0x[0-9a-f]{,2}" #Espaço de memoria = 0x(Qualquer numero de 00 a ff)
-        memm = r""
+        memm = r"0x[0-9a-f]{,2}" #Espaço de memoria = 0x(Qualquer numero de 00 a ff)
+        # memm = r""
 
         patterns = [
             rf"^(mov)\s+({regis}|{memm}),\s+({regis}|{numbr})$", #mov

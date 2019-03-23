@@ -1,8 +1,11 @@
+from helpers.PrintFormat import PrintFormat
+
 class RAM():
     def __init__(self, bus):
         self.__bus = bus
         self.__pointer = '0x0'
-        self.__memory = {hex(i) : None for i in range(0,256)}
+        self.__memory = {hex(i) : 0 for i in range(0,256)}
+        print(f'>> RAM State:   {PrintFormat.non_empty_dict(self.__memory)}')
 
     def write(self, op, instr, addr, info_size):
         if op == 'w':
@@ -17,11 +20,12 @@ class RAM():
             instr.append(relative_addr)
         return instr
 
-    # def get_value(self, key):
-    #     return self.__memory[key]
+    def get_value(self, key):
+        return self.__memory[key]
 
-    # def set_value(self, key, value):
-    #     self.__memory[key] = value
+    def set_value(self, key, value):
+        self.__memory[key] = value
+        print(f'>> RAM State:   {PrintFormat.non_empty_dict(self.__memory)}')
 
     def pointer(self):
         return self.__pointer

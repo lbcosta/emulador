@@ -7,14 +7,14 @@ class CPU():
         self.__arch = arch
         self.__decoder = Decoder(arch)
         self.__registers = {
-            'A': None,
-            'B': None,
-            'C': None,
-            'D': None,
+            'A': 0,
+            'B': 0,
+            'C': 0,
+            'D': 0,
         }
-        self.__instr_pointer = None
+        self.__instr_pointer = 0
         
-        print(f'>> State:       {self.__registers}')
+        print(f'>> CPU State:   {self.__registers}')
 
 
     def interruption(self, op, addr, info_size):
@@ -23,47 +23,56 @@ class CPU():
 
     def process(self, info):
         instr = self.__decoder.decode(info)
-
         print(f'>> Executing:   {PrintFormat.format(instr)}')
+
+        operable_instr = [instr.pop(0)] 
+        operable_instr += self.__operand_conversion(instr)
+
+        if operable_instr[0] == 'mov':
+            self.__mov(operable_instr[1], operable_instr[2])
+        elif operable_instr[0] == 'add':
+            self.__add(operable_instr[1], operable_instr[2])
+        elif operable_instr[0] == 'inc':
+            self.__inc(operable_instr[1])
+        else:
+            self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+
+        print(f'>> CPU State:   {self.__registers}')
+
+    def __operand_conversion(self, operands):
+        converted_operands = []
+        for idx, operand in enumerate(operands):
+            if idx is 0: #O primeiro parâmetro sempre é o recipiente da operação
+                converted_operands.append(operand)  #Por isso retorna a chave para o recipiente
+            else: #Para os outros parâmetros, só são necessários os valores
+                if operand in self.__registers: #Registrador
+                    converted_operands.append(int(self.__registers[operand]))
+                elif operand[:2] == '0x': #RAM
+                    converted_operands.append(int(self.__bus.get_ram_value_from(operand)))
+                else: #Número
+                    converted_operands.append(int(operand))
+        return converted_operands
         
-        if instr[0] == 'mov':
-            self.__mov(instr[1], instr[2])
-        elif instr[0] == 'add':
-            self.__add(instr[1], instr[2])
-        elif instr[0] == 'inc':
-            self.__inc(instr[1])
-        else:
-            self.__imul(instr[1], instr[2], instr[3])
-
-        print(f'>> State:       {self.__registers}')
-
     def __mov(self, target_key, value):
-        if value in self.__registers:
-            self.__registers[target_key] = self.__registers[value]
-        else:
+        if target_key in self.__registers:
             self.__registers[target_key] = value
+        else:
+            self.__bus.set_ram_value_at(target_key, value)
 
     def __add(self, acc_key, addend):
-        if addend in self.__registers:
-            self.__registers[acc_key] += self.__registers[addend]
-        else:
+        if acc_key in self.__registers:
             self.__registers[acc_key] += addend
-
-    def __inc(self, target):
-        if self.__registers[target] is None:    
-            self.__registers[target] = 1
         else:
-            self.__registers[target] += 1
+            self.__bus.set_ram_value_at(acc_key, self.__bus.get_ram_value_from(acc_key) + addend)
 
+    def __inc(self, target_key):
+        if target_key in self.__registers:
+            self.__registers[target_key] += 1
+        else:
+            self.__bus.set_ram_value_at(target_key, self.__bus.get_ram_value_from(target_key) + 1)
 
     def __imul(self, acc_key, factor1, factor2):
-        if factor1 in self.__registers:
-            if factor2 in self.__registers:
-                self.__registers[acc_key] = self.__registers[factor1] * self.__registers[factor2]
-            else:
-                self.__registers[acc_key] = self.__registers[factor1] * factor2
+        if acc_key in self.__registers:
+            self.__registers[acc_key] = factor1 * factor2
         else:
-            if factor2 in self.__registers:
-                self.__registers[acc_key] = factor1 * self.__registers[factor2]
-            else:
-                self.__registers[acc_key] = factor1 * factor2
+            self.__bus.set_ram_value_at(acc_key, factor1 * factor2)

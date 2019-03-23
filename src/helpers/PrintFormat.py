@@ -11,3 +11,12 @@ class PrintFormat():
                 instr_str += str(operand) + ', '
         return instr_str
 
+    @staticmethod
+    def non_empty_dict(dictionary):
+        d_copy = dictionary.copy()
+        for key, value in dict(d_copy).items():
+            if value is 0 or isinstance(value, list):
+                del d_copy[key]
+        return d_copy
+
+
