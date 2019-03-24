@@ -25,6 +25,7 @@ class CPU():
     def process(self, instr):
         decoded_instr = self.__decoder.decode(instr)
         
+        registers_before = self.__registers.copy()
         print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
         operable_instr = self.__operand_conversion(decoded_instr)
@@ -38,8 +39,9 @@ class CPU():
         else:
             self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
 
-        print(color_format(">> CPU State:   ", "PURPLE"), end='')
-        print(color_format(self.__registers, "PURPLE"))
+        if self.__registers != registers_before:
+            print(color_format(">> CPU State:   ", "PURPLE"), end='')
+            print(color_format(self.__registers, "PURPLE"))
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)
@@ -64,18 +66,33 @@ class CPU():
 
     def __add(self, acc_key, addend):
         if acc_key in self.__registers:
-            self.__registers[acc_key] += addend
+            result = self.__registers[acc_key] + addend
+            self.__check_for_overflow(result)
+            self.__registers[acc_key] = result
         else:
-            self.__bus.set_ram_value_at(acc_key, self.__bus.get_ram_value_from(acc_key) + addend)
+            result = self.__bus.get_ram_value_from(acc_key) + addend
+            self.__check_for_overflow(result)
+            self.__bus.set_ram_value_at(acc_key, result)
 
     def __inc(self, target_key):
         if target_key in self.__registers:
-            self.__registers[target_key] += 1
+            result = self.__registers[target_key] + 1
+            self.__check_for_overflow(result)
+            self.__registers[target_key] = result
         else:
-            self.__bus.set_ram_value_at(target_key, self.__bus.get_ram_value_from(target_key) + 1)
+            result = self.__bus.get_ram_value_from(target_key) + 1
+            self.__check_for_overflow(result)
+            self.__bus.set_ram_value_at(target_key, result)
 
     def __imul(self, acc_key, factor1, factor2):
+        result = factor1 * factor2
+        self.__check_for_overflow(result)
+
         if acc_key in self.__registers:
-            self.__registers[acc_key] = factor1 * factor2
+            self.__registers[acc_key] = result
         else:
-            self.__bus.set_ram_value_at(acc_key, factor1 * factor2)
+            self.__bus.set_ram_value_at(acc_key, result)
+
+    def __check_for_overflow(self, number):
+        if number >= (2 ** self.__arch):
+            raise ValueError(color_format('CPU Overflow!!!', "RED"))

@@ -5,7 +5,8 @@ class Parser:
     def parse(self, instr):
         regis = r"[A-D]" #Registradores = Qualquer letra maiuscula
         numbr = r"\d+" #Numeros inteiros = Qualquer numero
-        memm = r"0x[0-9a-f]{,2}" #Espaço de memoria = 0x(Qualquer numero de 00 a ff)
+        #O espaço de memória da RAM é dividido em instruções (de 0x0 a 0x7fff) e dados (0x8000 a 0xffff)
+        memm = r"0x[89a-f][0-9a-f]{3}" #Ou seja, nada abaixo de 0x8000 é válido em uma instrução
 
         patterns = [
             rf"^(mov)\s+({regis}|{memm}),\s+({regis}|{numbr})$", #mov
@@ -21,4 +22,4 @@ class Parser:
             parameters = valid_test[0].groups()
             return list(parameters)
         else:
-            raise SyntaxError(color_format('Instrução inválida!', "RED"))
+            raise SyntaxError(color_format('Instrução inválida! Cheque sua sintaxe ou se o espaço de memória é permitido', "RED"))
