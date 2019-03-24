@@ -8,11 +8,10 @@ class RAM():
         print(color_format(">> RAM State:   ", "ORANGE"), end='')
         print(color_format(no_empty_format(self.__memory), "ORANGE"))
 
-    def write(self, op, instr, addr, info_size):
-        if op == 'w':
-            for param in instr:
-                self.__memory[self.__pointer] = param
-                self.__pointer = hex(int(self.__pointer, 16) + 1)
+    def write(self, instr, addr, info_size):
+        for param in instr:
+            self.__memory[self.__pointer] = param
+            self.__pointer = hex(int(self.__pointer, 16) + 1)
 
     def read(self, addr, info_size):
         instr = []

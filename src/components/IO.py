@@ -3,6 +3,6 @@ class IO():
         self.__bus = bus
 
     def new_input(self, instr):
-        ram_addr = self.__bus.ram_pointer()
-        self.__bus.send_instr('w', instr, ram_addr, len(instr))
-        self.__bus.send_intrpt('i', ram_addr, len(instr))
+        ram_addr = self.__bus.get_ram_pointer()
+        self.__bus.send_operation('w', ram_addr, len(instr), instr)
+        self.__bus.send_operation('i', ram_addr, len(instr))

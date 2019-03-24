@@ -18,17 +18,16 @@ class CPU():
         print(color_format(self.__registers, "PURPLE"))
 
 
-    def interruption(self, op, addr, info_size):
+    def interruption(self, addr, info_size):
         self.__instr_pointer = addr
-        self.__bus.read_ram('r', addr, info_size)
+        self.__bus.send_operation('r', addr, info_size)
 
-    def process(self, info):
-        instr = self.__decoder.decode(info)
+    def process(self, instr):
+        decoded_instr = self.__decoder.decode(instr)
         
-        print(color_format(f'>> Executing:   {instruction_format(instr)}', "BOLD"))
+        print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-        operable_instr = [instr.pop(0)] 
-        operable_instr += self.__operand_conversion(instr)
+        operable_instr = self.__operand_conversion(decoded_instr)
 
         if operable_instr[0] == 'mov':
             self.__mov(operable_instr[1], operable_instr[2])
@@ -43,18 +42,19 @@ class CPU():
         print(color_format(self.__registers, "PURPLE"))
 
     def __operand_conversion(self, operands):
-        converted_operands = []
+        mnemonic = operands.pop(0)
+        converted_instr = [mnemonic]
         for idx, operand in enumerate(operands):
             if idx is 0: #O primeiro parâmetro sempre é o recipiente da operação
-                converted_operands.append(operand)  #Por isso retorna a chave para o recipiente
+                converted_instr.append(operand)  #Por isso retorna a chave para o recipiente
             else: #Para os outros parâmetros, só são necessários os valores
                 if operand in self.__registers: #Registrador
-                    converted_operands.append(int(self.__registers[operand]))
+                    converted_instr.append(int(self.__registers[operand]))
                 elif operand[:2] == '0x': #RAM
-                    converted_operands.append(int(self.__bus.get_ram_value_from(operand)))
+                    converted_instr.append(int(self.__bus.get_ram_value_from(operand)))
                 else: #Número
-                    converted_operands.append(int(operand))
-        return converted_operands
+                    converted_instr.append(int(operand))
+        return converted_instr
         
     def __mov(self, target_key, value):
         if target_key in self.__registers:

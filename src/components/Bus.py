@@ -2,17 +2,18 @@ class Bus():
     def __init__(self):
         self.observers = {}
 
-    def send_instr(self, op, instr, addr, info_size):
-        self.observers['RAM_WRITE'](op, instr, addr, info_size)
+    def send_operation(self, op, addr, instr_size, instr=''):
+        if op is 'w':
+            self.observers['RAM_WRITE'](instr, addr, instr_size)
+        elif op is 'r':
+            instr = self.observers['RAM_READ'](addr, instr_size)
+            self.observers['CPU_PROCESS'](instr)
+        elif op is 'i':
+            self.observers['CPU_INTRPT'](addr, instr_size)
+        else:
+            raise ValueError('Operação inválida')
     
-    def send_intrpt(self, op, addr, info_size):
-        self.observers['CPU_INTRPT'](op, addr, info_size)
-
-    def read_ram(self, op, addr, info_size):
-        info = self.observers['RAM_READ'](addr, info_size)
-        self.observers['CPU_PROCESS'](info)
-
-    def ram_pointer(self):
+    def get_ram_pointer(self):
         return self.observers['RAM_PTR']()
 
     def get_ram_value_from(self, key):
