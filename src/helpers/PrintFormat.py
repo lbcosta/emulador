@@ -1,3 +1,4 @@
+import os
 def instruction_format(instr):
     operands = instr[1:]
     instr_str = instr[0] + ' '
@@ -29,4 +30,7 @@ def color_format(content, color_style):
         "UNDERLINE" : "\033[4m"
     }
 
-    return colors[color_style] + str(content) + colors["ENDC"]
+    if os.name == 'posix':
+        return colors[color_style] + str(content) + colors["ENDC"]
+    else:
+        return str(content)
