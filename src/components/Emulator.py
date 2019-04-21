@@ -14,20 +14,25 @@ class Emulator():
             self.__arch = int(arch)
             self.__parser = Parser()
             self.__encoder = Encoder(self.__arch)
-            self.__bus = Bus()
+            self.__bus = {
+                'data': Bus(),
+                'control': Bus(),
+                'address': Bus()
+            }
             self.__io = IO(self.__bus)
             self.__ram = RAM(self.__bus)
             self.__cpu = CPU(self.__bus, self.__arch)
 
-            self.__bus.observers = {
-                'RAM_WRITE':self.__ram.write,
-                'RAM_READ':self.__ram.read,
-                'RAM_PTR': self.__ram.pointer,
-                'RAM_GET': self.__ram.get_value,
-                'RAM_SET': self.__ram.set_value,
-                'CPU_INTRPT':self.__cpu.interruption,
-                'CPU_PROCESS':self.__cpu.process
-            }
+            for key in self.__bus:
+                self.__bus[key].observers = {
+                    'RAM_WRITE':self.__ram.write,
+                    'RAM_READ':self.__ram.read,
+                    'RAM_PTR': self.__ram.pointer,
+                    'RAM_GET': self.__ram.get_value,
+                    'RAM_SET': self.__ram.set_value,
+                    'CPU_INTRPT':self.__cpu.interruption,
+                    'CPU_PROCESS':self.__cpu.process
+                }
 
     def run(self, assembly_file):
         with open(assembly_file, 'r') as assembly_code:

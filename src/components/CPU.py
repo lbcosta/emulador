@@ -13,14 +13,24 @@ class CPU():
             'D': 0,
         }
         self.__instr_pointer = 0
-        
+        self.__instruction = []
         print(color_format(">> CPU State:   ", "PURPLE"), end='')
         print(color_format(self.__registers, "PURPLE"))
 
 
-    def interruption(self, addr, info_size):
-        self.__instr_pointer = addr
-        self.__bus.send_operation('r', addr, info_size)
+    def interruption(self, info):
+        self.__instruction.append(info)
+
+        if len(self.__instruction) == 2:
+            info_size = self.__instruction[0]
+            addr = self.__instruction[1]
+            
+            self.__instr_pointer = addr
+
+            self.__bus['control'].send('r')
+            self.__bus['data'].send(info_size)
+            self.__bus['address'].send(addr)
+            self.__instruction = []
 
     def process(self, instr):
         decoded_instr = self.__decoder.decode(instr)
@@ -53,7 +63,7 @@ class CPU():
                 if operand in self.__registers: #Registrador
                     converted_instr.append(int(self.__registers[operand]))
                 elif operand[:2] == '0x': #RAM
-                    converted_instr.append(int(self.__bus.get_ram_value_from(operand)))
+                    converted_instr.append(int(self.__bus['data'].get_ram_value_from(operand)))
                 else: #Número
                     converted_instr.append(int(operand))
         return converted_instr
@@ -62,7 +72,7 @@ class CPU():
         if target_key in self.__registers:
             self.__registers[target_key] = value
         else:
-            self.__bus.set_ram_value_at(target_key, value)
+            self.__bus['data'].set_ram_value_at(target_key, value)
 
     def __add(self, acc_key, addend):
         if acc_key in self.__registers:
@@ -70,9 +80,9 @@ class CPU():
             self.__check_for_overflow(result)
             self.__registers[acc_key] = result
         else:
-            result = self.__bus.get_ram_value_from(acc_key) + addend
+            result = self.__bus['data'].get_ram_value_from(acc_key) + addend
             self.__check_for_overflow(result)
-            self.__bus.set_ram_value_at(acc_key, result)
+            self.__bus['data'].set_ram_value_at(acc_key, result)
 
     def __inc(self, target_key):
         if target_key in self.__registers:
@@ -80,9 +90,9 @@ class CPU():
             self.__check_for_overflow(result)
             self.__registers[target_key] = result
         else:
-            result = self.__bus.get_ram_value_from(target_key) + 1
+            result = self.__bus['data'].get_ram_value_from(target_key) + 1
             self.__check_for_overflow(result)
-            self.__bus.set_ram_value_at(target_key, result)
+            self.__bus['data'].set_ram_value_at(target_key, result)
 
     def __imul(self, acc_key, factor1, factor2):
         result = factor1 * factor2
@@ -91,7 +101,7 @@ class CPU():
         if acc_key in self.__registers:
             self.__registers[acc_key] = result
         else:
-            self.__bus.set_ram_value_at(acc_key, result)
+            self.__bus['data'].set_ram_value_at(acc_key, result)
 
     def __check_for_overflow(self, number):
         if number >= (2 ** self.__arch):
