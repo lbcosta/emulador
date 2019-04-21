@@ -1,8 +1,11 @@
+from time import sleep
+
 class Bus():
     mode = ''
     
-    def __init__(self):
+    def __init__(self, clock_cycle):
         self.observers = {}
+        self.__clock_cycle = clock_cycle
 
     def send(self, info):
         if info in ['w', 'r', 'i']:
@@ -18,6 +21,7 @@ class Bus():
                 self.observers['CPU_INTRPT'](info)
             else:
                 raise ValueError('Operação de barramento desconhecida')
+        sleep(self.__clock_cycle)
 
     def get_ram_pointer(self):
         return self.observers['RAM_PTR']()
