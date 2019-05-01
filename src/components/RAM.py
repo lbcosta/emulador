@@ -10,15 +10,21 @@ class RAM():
         print(color_format(no_empty_format(self.__memory), "ORANGE"))
 
     def write(self, info):
-        self.__instruction.append(info)
-        if len(self.__instruction) == 3:
-            instr = self.__instruction[0]
-            for param in instr:
-                self.__memory[self.__pointer] = param
-                self.__pointer = hex(int(self.__pointer, 16) + 1)
-            if int(self.__pointer, 16) >= (len(self.__memory) // 2):
-                raise ValueError(color_format("RAM Overflow!!!", "RED"))
-            self.__instruction = []
+        if type(info) is list:
+            try:
+                self.__instruction[0].extend(info)
+            except: #Se for o primeiro chunk, inicia uma nova lista na posição 0.
+                self.__instruction.append(info)
+        else:
+            self.__instruction.append(info)
+            if len(self.__instruction) == 3:
+                instr = self.__instruction[0]
+                for param in instr:
+                    self.__memory[self.__pointer] = param
+                    self.__pointer = hex(int(self.__pointer, 16) + 1)
+                if int(self.__pointer, 16) >= (len(self.__memory) // 2):
+                    raise ValueError(color_format("RAM Overflow!!!", "RED"))
+                self.__instruction = []
 
     def read(self, info):
         self.__instruction.append(info)

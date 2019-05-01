@@ -7,18 +7,17 @@ from components.CPU import CPU
 from helpers.PrintFormat import color_format
 
 class Emulator():
-    def __init__(self, arch, clock):
+    def __init__(self, arch, bandwidth):
         if int(arch) not in (8, 16, 32, 64):
             raise ValueError(color_format('Arquitetura inválida!',"RED"))
         else:
             self.__arch = int(arch)
             self.__parser = Parser()
             self.__encoder = Encoder(self.__arch)
-            clock_cycle = 1/clock
             self.__bus = {
-                'data': Bus(clock_cycle),
-                'control': Bus(clock_cycle),
-                'address': Bus(clock_cycle)
+                'data': Bus(bandwidth),
+                'control': Bus(bandwidth),
+                'address': Bus(bandwidth)
             }
             self.__io = IO(self.__bus)
             self.__ram = RAM(self.__bus)

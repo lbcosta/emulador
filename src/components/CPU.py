@@ -13,45 +13,50 @@ class CPU():
             'D': 0,
         }
         self.__instr_pointer = 0
+        self.__instruction_info = []
         self.__instruction = []
         print(color_format(">> CPU State:   ", "PURPLE"), end='')
         print(color_format(self.__registers, "PURPLE"))
 
 
     def interruption(self, info):
-        self.__instruction.append(info)
+        self.__instruction_info.append(info)
 
-        if len(self.__instruction) == 2:
-            info_size = self.__instruction[0]
-            addr = self.__instruction[1]
+        if len(self.__instruction_info) == 2:
+            info_size = self.__instruction_info[0]
+            addr = self.__instruction_info[1]
             
             self.__instr_pointer = addr
 
             self.__bus['control'].send('r')
             self.__bus['data'].send(info_size)
             self.__bus['address'].send(addr)
-            self.__instruction = []
+            self.__instruction_info = []
 
     def process(self, instr):
-        decoded_instr = self.__decoder.decode(instr)
-        
-        registers_before = self.__registers.copy()
-        print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
-
-        operable_instr = self.__operand_conversion(decoded_instr)
-
-        if operable_instr[0] == 'mov':
-            self.__mov(operable_instr[1], operable_instr[2])
-        elif operable_instr[0] == 'add':
-            self.__add(operable_instr[1], operable_instr[2])
-        elif operable_instr[0] == 'inc':
-            self.__inc(operable_instr[1])
+        if instr is not 'end':
+            self.__instruction.extend(instr)
         else:
-            self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+            decoded_instr = self.__decoder.decode(self.__instruction)
+            
+            registers_before = self.__registers.copy()
+            print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-        if self.__registers != registers_before:
-            print(color_format(">> CPU State:   ", "PURPLE"), end='')
-            print(color_format(self.__registers, "PURPLE"))
+            operable_instr = self.__operand_conversion(decoded_instr)
+
+            if operable_instr[0] == 'mov':
+                self.__mov(operable_instr[1], operable_instr[2])
+            elif operable_instr[0] == 'add':
+                self.__add(operable_instr[1], operable_instr[2])
+            elif operable_instr[0] == 'inc':
+                self.__inc(operable_instr[1])
+            else:
+                self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+
+            self.__instruction = []
+            if self.__registers != registers_before:
+                print(color_format(">> CPU State:   ", "PURPLE"), end='')
+                print(color_format(self.__registers, "PURPLE"))
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)
