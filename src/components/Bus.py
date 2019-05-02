@@ -9,17 +9,17 @@ class Bus():
 
     def __if_list_send_in_chunks(self, operation, info):
         if type(info) is list:
-            for x in range(0, len(info), self.__bandwidth):
-                chunk = info[x : x + self.__bandwidth]
-                print(f'sending chunk {chunk}')
-                print('...')
-                self.observers[operation](chunk)
-                sleep(1)
-                print('sent!')
+            chunk = []
+            for word in info:
+                for byte in word:
+                    chunk.append(byte)
+                    if len(chunk) is self.__bandwidth:
+                        self.observers[operation](chunk)
+                        sleep(1)
+                        chunk = []
         else:
             self.observers[operation](info)
             sleep(1)
-        print('everything sent here :)')
             
 
     def send(self, info):

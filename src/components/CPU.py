@@ -18,6 +18,15 @@ class CPU():
         print(color_format(">> CPU State:   ", "PURPLE"), end='')
         print(color_format(self.__registers, "PURPLE"))
 
+    def __format_instruction(self):
+        byte_groups = []
+        byte_group = []
+        for byte in self.__instruction:
+            byte_group.append(byte)
+            if len(byte_group) is self.__arch // 8:
+                byte_groups.append(byte_group)
+                byte_group = []
+        self.__instruction = byte_groups
 
     def interruption(self, info):
         self.__instruction_info.append(info)
@@ -37,6 +46,7 @@ class CPU():
         if instr is not 'end':
             self.__instruction.extend(instr)
         else:
+            self.__format_instruction()
             decoded_instr = self.__decoder.decode(self.__instruction)
             
             registers_before = self.__registers.copy()

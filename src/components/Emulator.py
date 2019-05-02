@@ -20,7 +20,7 @@ class Emulator():
                 'address': Bus(bandwidth)
             }
             self.__io = IO(self.__bus)
-            self.__ram = RAM(self.__bus)
+            self.__ram = RAM(self.__bus, self.__arch)
             self.__cpu = CPU(self.__bus, self.__arch)
 
             for key in self.__bus:

@@ -1,13 +1,28 @@
 from helpers.PrintFormat import no_empty_format, color_format
 
 class RAM():
-    def __init__(self, bus):
+    def __init__(self, bus, arch):
         self.__bus = bus
+        self.__arch = arch
         self.__pointer = '0x0'
         self.__memory = {hex(i) : 0 for i in range(0,65536)}
         self.__instruction = []
         print(color_format(">> RAM State:   ", "ORANGE"), end='')
         print(color_format(no_empty_format(self.__memory), "ORANGE"))
+
+    def __format_instruction(self):
+        byte_list = []
+        for byte in self.__instruction[0]:
+            byte_list.append(byte)
+        byte_groups = []
+        byte_group = []
+        for byte in byte_list:
+            byte_group.append(byte)
+            if len(byte_group) is self.__arch // 8:
+                byte_groups.append(byte_group)
+                byte_group = []
+        self.__instruction[0] = byte_groups
+
 
     def write(self, info):
         if type(info) is list:
@@ -18,6 +33,7 @@ class RAM():
         else:
             self.__instruction.append(info)
             if len(self.__instruction) == 3:
+                self.__format_instruction()
                 instr = self.__instruction[0]
                 for param in instr:
                     self.__memory[self.__pointer] = param
