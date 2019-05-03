@@ -1,4 +1,6 @@
 import os
+from time import sleep
+
 def instruction_format(instr):
     operands = instr[1:]
     instr_str = instr[0] + ' '
@@ -16,6 +18,12 @@ def no_empty_format(dictionary):
         if value is 0 or isinstance(value, list):
             del d_copy[key]
     return str(d_copy)
+
+def print_and_sleep(data):
+    # print(color_format(f'\t\t\t\t{data} sendo enviado...', 'YELLOW'))
+    print(color_format(f'\t\t\t\tByte sendo enviado...', 'YELLOW'))
+    sleep(1)
+    print(color_format('\t\t\t\tEnviado!', 'YELLOW'))
 
 
 def color_format(content, color_style):

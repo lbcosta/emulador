@@ -7,6 +7,8 @@ class RAM():
         self.__pointer = '0x0'
         self.__memory = {hex(i) : 0 for i in range(0,65536)}
         self.__instruction = []
+        
+    def print_state(self):
         print(color_format(">> RAM State:   ", "ORANGE"), end='')
         print(color_format(no_empty_format(self.__memory), "ORANGE"))
 

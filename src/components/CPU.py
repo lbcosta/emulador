@@ -15,6 +15,8 @@ class CPU():
         self.__instr_pointer = 0
         self.__instruction_info = []
         self.__instruction = []
+        
+    def print_state(self):
         print(color_format(">> CPU State:   ", "PURPLE"), end='')
         print(color_format(self.__registers, "PURPLE"))
 
