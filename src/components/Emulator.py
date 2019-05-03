@@ -15,9 +15,9 @@ class Emulator():
             self.__parser = Parser()
             self.__encoder = Encoder(self.__arch)
             self.__bus = {
-                'data': Bus(bandwidth),
-                'control': Bus(bandwidth),
-                'address': Bus(bandwidth)
+                'data': Bus(self.__arch, bandwidth),
+                'control': Bus(self.__arch, bandwidth),
+                'address': Bus(self.__arch, bandwidth)
             }
             self.__io = IO(self.__bus)
             self.__ram = RAM(self.__bus, self.__arch)

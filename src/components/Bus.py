@@ -3,17 +3,20 @@ from time import sleep
 class Bus():
     mode = ''
     
-    def __init__(self, bandwidth):
+    def __init__(self, arch, bandwidth):
         self.observers = {}
+        self.__arch = arch
         self.__bandwidth = bandwidth
 
     def __if_list_send_in_chunks(self, operation, info):
         if type(info) is list:
             chunk = []
+            count = (self.__arch // 8) * len(info)
             for word in info:
                 for byte in word:
                     chunk.append(byte)
-                    if len(chunk) is self.__bandwidth:
+                    count -= 1
+                    if len(chunk) is self.__bandwidth or count is 0:
                         self.observers[operation](chunk)
                         sleep(1)
                         chunk = []

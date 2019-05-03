@@ -30,7 +30,6 @@ class CPU():
 
     def interruption(self, info):
         self.__instruction_info.append(info)
-
         if len(self.__instruction_info) == 2:
             info_size = self.__instruction_info[0]
             addr = self.__instruction_info[1]

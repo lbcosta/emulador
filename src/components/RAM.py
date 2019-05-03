@@ -44,7 +44,6 @@ class RAM():
 
     def read(self, info):
         self.__instruction.append(info)
-
         if len(self.__instruction) == 2:
             instr = []
             info_size = self.__instruction[0]
@@ -53,7 +52,7 @@ class RAM():
             for pos in range(0,info_size):
                 relative_addr = self.__memory[hex(int(addr, 16) + pos)]
                 instr.append(relative_addr)
-            
+                
             self.__instruction = []
             return instr
         else:
