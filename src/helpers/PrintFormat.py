@@ -21,9 +21,9 @@ def no_empty_format(dictionary):
 
 def print_and_sleep(data):
     # print(color_format(f'\t\t\t\t{data} sendo enviado...', 'YELLOW'))
-    print(color_format(f'\t\t\t\tByte sendo enviado...', 'YELLOW'))
+    print(color_format(f'\t\t\t\tSending byte...', 'YELLOW'))
     sleep(1)
-    print(color_format('\t\t\t\tEnviado!', 'YELLOW'))
+    print(color_format('\t\t\t\tSent!', 'YELLOW'))
 
 
 def color_format(content, color_style):
