@@ -1,13 +1,24 @@
 class Cache():
     def __init__(self):
-        self.__memory = {hex(i) : 0 for i in range(0,256)}
+        self.__memory = {}
+        # self.__memory['0xfc'] = 0
+        # self.__memory['0xfd'] = 1
+        # self.__memory['0xfe'] = 4
+        # self.__memory['0xff'] = 3
+
+        # print(self.__memory)
 
     def LFU(self):
         pass
 
-    def fetch(self, target):
-        for instruction in self.__memory:
-            if instruction is target:
-                return instruction
-        return 'miss'
+    def insert(self, data):
+        self.__memory.update(data)
+
+    def check(self, addr):
+        return addr in self.__memory
+
+# cache = Cache()
+# result = cache.searchFor([0,1,4,3])
+# print(result)
+
 

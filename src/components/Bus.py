@@ -1,5 +1,5 @@
 from helpers.PrintFormat import print_and_sleep
-#Erros: arch=16 e bandwidth=8 , arch=64 e bandwidth=32, arch=8 e bandwidth=8
+
 class Bus():
     mode = ''
     
