@@ -65,8 +65,7 @@ class RAM():
 
     def set_value(self, key, value):
         self.__memory[key] = value
-        print(color_format(">> RAM State:   ", "ORANGE"), end='')
-        print(color_format(no_empty_format(self.__memory), "ORANGE"))
+        self.print_state()
 
     def pointer(self):
         return self.__pointer

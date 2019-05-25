@@ -66,8 +66,7 @@ class CPU():
 
             self.__instruction = []
             if self.__registers != registers_before:
-                print(color_format(">> CPU State:   ", "PURPLE"), end='')
-                print(color_format(self.__registers, "PURPLE"))
+                self.print_state()
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)
