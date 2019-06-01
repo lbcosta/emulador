@@ -23,7 +23,9 @@ class Encoder():
             'mov': 74,
             'add' : 24,
             'inc' : 4,
-            'imul' : 104
+            'imul' : 104,
+            'jmp' : 73,
+            'lbl' : 103
         }
 
         encoded_params = []
@@ -35,7 +37,7 @@ class Encoder():
             elif param[:2] == '0x':
                 encoded_params.append(int(param,16))
                 encoded_params.append(3)
-            elif re.search('[A-D]', param):
+            elif re.search('[A-D<>=]', param):
                 encoded_params.append(ord(param))
                 encoded_params.append(1)
             else:

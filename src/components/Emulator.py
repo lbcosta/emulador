@@ -49,7 +49,6 @@ class Emulator():
         with open(assembly_file, 'r') as assembly_code:
             for line in assembly_code:
                 parsed_instr = self.__parser.parse(line.rstrip())
-                print(parsed_instr)
-                # encoded_instr = self.__encoder.encode(parsed_instr)
-                # self.__io.new_input(encoded_instr)
+                encoded_instr = self.__encoder.encode(parsed_instr)
+                self.__io.new_input(encoded_instr)
 
