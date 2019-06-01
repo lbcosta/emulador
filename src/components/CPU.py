@@ -49,24 +49,24 @@ class CPU():
         else:
             self.__format_instruction()
             decoded_instr = self.__decoder.decode(self.__instruction)
-            
-            registers_before = self.__registers.copy()
-            print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
+            print(f'DECODED IN CPU: {decoded_instr}')
+            # registers_before = self.__registers.copy()
+            # print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-            operable_instr = self.__operand_conversion(decoded_instr)
+            # operable_instr = self.__operand_conversion(decoded_instr)
 
-            if operable_instr[0] == 'mov':
-                self.__mov(operable_instr[1], operable_instr[2])
-            elif operable_instr[0] == 'add':
-                self.__add(operable_instr[1], operable_instr[2])
-            elif operable_instr[0] == 'inc':
-                self.__inc(operable_instr[1])
-            else:
-                self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+            # if operable_instr[0] == 'mov':
+            #     self.__mov(operable_instr[1], operable_instr[2])
+            # elif operable_instr[0] == 'add':
+            #     self.__add(operable_instr[1], operable_instr[2])
+            # elif operable_instr[0] == 'inc':
+            #     self.__inc(operable_instr[1])
+            # else:
+            #     self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
 
             self.__instruction = []
-            if self.__registers != registers_before:
-                self.print_state()
+            # if self.__registers != registers_before:
+            #     self.print_state()
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)

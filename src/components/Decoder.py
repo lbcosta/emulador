@@ -20,7 +20,9 @@ class Decoder():
             74: 'mov',
             24: 'add',
             4 : 'inc',
-            104:'imul'
+            104:'imul',
+            73 : 'jmp',
+            103 : 'lbl'
         }
 
         params = []
