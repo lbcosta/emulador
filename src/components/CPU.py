@@ -49,24 +49,28 @@ class CPU():
         else:
             self.__format_instruction()
             decoded_instr = self.__decoder.decode(self.__instruction)
-            print(f'DECODED IN CPU: {decoded_instr}')
-            # registers_before = self.__registers.copy()
-            # print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-            # operable_instr = self.__operand_conversion(decoded_instr)
+            registers_before = self.__registers.copy()
+            print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-            # if operable_instr[0] == 'mov':
-            #     self.__mov(operable_instr[1], operable_instr[2])
-            # elif operable_instr[0] == 'add':
-            #     self.__add(operable_instr[1], operable_instr[2])
-            # elif operable_instr[0] == 'inc':
-            #     self.__inc(operable_instr[1])
-            # else:
-            #     self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+            operable_instr = self.__operand_conversion(decoded_instr)
+
+            if operable_instr[0] == 'mov':
+                self.__mov(operable_instr[1], operable_instr[2])
+            elif operable_instr[0] == 'add':
+                self.__add(operable_instr[1], operable_instr[2])
+            elif operable_instr[0] == 'inc':
+                self.__inc(operable_instr[1])
+            elif operable_instr[0] == 'lbl':
+                self.__lbl(operable_instr[1])
+            elif operable_instr[0] == 'imul':
+                self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+            else:
+                self.__jmp(operable_instr[1], operable_instr[2], operable_instr[3], operable_instr[4])
 
             self.__instruction = []
-            # if self.__registers != registers_before:
-            #     self.print_state()
+            if self.__registers != registers_before:
+                self.print_state()
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)
@@ -79,6 +83,8 @@ class CPU():
                     converted_instr.append(int(self.__registers[operand]))
                 elif operand[:2] == '0x': #RAM
                     converted_instr.append(int(self.__bus['data'].get_ram_value_from(operand)))
+                elif operand in ['<','>','=']:
+                    converted_instr.append(operand)
                 else: #Número
                     converted_instr.append(int(operand))
         return converted_instr
@@ -117,6 +123,14 @@ class CPU():
             self.__registers[acc_key] = result
         else:
             self.__bus['data'].set_ram_value_at(acc_key, result)
+
+    def __lbl(self, label):
+        print(f'LABEL: {label}')
+
+    def __jmp(self, label, register, comparison_op, value):
+        print(f'LABEL: {label} | REGISTER: {register} | COMPARISON: {comparison_op} | VALUE: {value}')
+        #eval('a>10')
+        #converter '=' para '=='
 
     def __check_for_overflow(self, number):
         if number >= (2 ** self.__arch):
