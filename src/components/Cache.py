@@ -1,24 +1,26 @@
 class Cache():
     def __init__(self):
         self.__memory = {}
-        # self.__memory['0xfc'] = 0
-        # self.__memory['0xfd'] = 1
-        # self.__memory['0xfe'] = 4
-        # self.__memory['0xff'] = 3
-
-        # print(self.__memory)
+        self.__label_map = {}
 
     def LFU(self):
         pass
 
-    def insert(self, data):
+    @property
+    def memory(self):
+        return self.__memory
+
+    def instruction_at(self, key):
+        return self.__memory[key]
+
+    def push(self, data):
         self.__memory.update(data)
 
     def check(self, addr):
-        return addr in self.__memory
+        return addr in self.__label_map
 
-# cache = Cache()
-# result = cache.searchFor([0,1,4,3])
-# print(result)
+    def map_label_to_addr(self, label, addr):
+        self.__label_map[label] = addr
 
-
+    def get_addr_on(self, label):
+        return self.__label_map[label]

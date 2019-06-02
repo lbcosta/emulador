@@ -1,3 +1,4 @@
+from components.Cache import Cache
 from components.Decoder import Decoder
 from helpers.PrintFormat import color_format, instruction_format
 
@@ -12,6 +13,7 @@ class CPU():
             'C': 0,
             'D': 0,
         }
+        self.__cache = Cache()
         self.__instr_pointer = 0
         self.__instruction_info = []
         self.__instruction = []
@@ -54,6 +56,9 @@ class CPU():
             print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
             operable_instr = self.__operand_conversion(decoded_instr)
+
+            #Salva na cache:
+            self.__cache.push({ self.__instr_pointer : operable_instr })
 
             if operable_instr[0] == 'mov':
                 self.__mov(operable_instr[1], operable_instr[2])
@@ -125,12 +130,14 @@ class CPU():
             self.__bus['data'].set_ram_value_at(acc_key, result)
 
     def __lbl(self, label):
-        print(f'LABEL: {label}')
+        self.__cache.map_label_to_addr(label, self.__instr_pointer)
 
-    def __jmp(self, label, register, comparison_op, value):
-        print(f'LABEL: {label} | REGISTER: {register} | COMPARISON: {comparison_op} | VALUE: {value}')
-        #eval('a>10')
-        #converter '=' para '=='
+    def __jmp(self, label, register_value, comparison_op, value):
+        if comparison_op is '=':
+            comparison_op = '=='
+        
+        if eval(f'{register_value}{comparison_op}{value}'):
+            self.__instr_pointer = self.__cache.get_addr_on(label)
 
     def __check_for_overflow(self, number):
         if number >= (2 ** self.__arch):
