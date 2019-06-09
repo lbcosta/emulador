@@ -14,6 +14,7 @@ class CPU():
             'D': 0,
         }
         self.__cache = Cache()
+        self.__is_cache_saving = False
         self.__instr_pointer = 0
         self.__instruction_info = []
         self.__instruction = []
@@ -52,30 +53,32 @@ class CPU():
             self.__format_instruction()
             decoded_instr = self.__decoder.decode(self.__instruction)
 
-            registers_before = self.__registers.copy()
             print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
 
-            operable_instr = self.__operand_conversion(decoded_instr)
+            self.__process_core(decoded_instr)
 
-            #Salva na cache:
+    def __process_core(self, decoded_instr):
+        registers_before = self.__registers.copy()
+        operable_instr = self.__operand_conversion(decoded_instr)
+        #Salva na cache:
+        if self.__is_cache_saving:
             self.__cache.push({ self.__instr_pointer : operable_instr })
+        if operable_instr[0] == 'mov':
+            self.__mov(operable_instr[1], operable_instr[2])
+        elif operable_instr[0] == 'add':
+            self.__add(operable_instr[1], operable_instr[2])
+        elif operable_instr[0] == 'inc':
+            self.__inc(operable_instr[1])
+        elif operable_instr[0] == 'lbl':
+            self.__lbl(operable_instr[1])
+        elif operable_instr[0] == 'imul':
+            self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
+        else:
+            self.__jmp(operable_instr[1], operable_instr[2], operable_instr[3], operable_instr[4])
 
-            if operable_instr[0] == 'mov':
-                self.__mov(operable_instr[1], operable_instr[2])
-            elif operable_instr[0] == 'add':
-                self.__add(operable_instr[1], operable_instr[2])
-            elif operable_instr[0] == 'inc':
-                self.__inc(operable_instr[1])
-            elif operable_instr[0] == 'lbl':
-                self.__lbl(operable_instr[1])
-            elif operable_instr[0] == 'imul':
-                self.__imul(operable_instr[1], operable_instr[2], operable_instr[3])
-            else:
-                self.__jmp(operable_instr[1], operable_instr[2], operable_instr[3], operable_instr[4])
-
-            self.__instruction = []
-            if self.__registers != registers_before:
-                self.print_state()
+        self.__instruction = []
+        if self.__registers != registers_before:
+            self.print_state()
 
     def __operand_conversion(self, operands):
         mnemonic = operands.pop(0)
@@ -85,7 +88,10 @@ class CPU():
                 converted_instr.append(operand)  #Por isso retorna a chave para o recipiente
             else: #Para os outros parâmetros, só são necessários os valores
                 if operand in self.__registers: #Registrador
-                    converted_instr.append(int(self.__registers[operand]))
+                    if mnemonic == 'jmp':
+                        converted_instr.append(operand)    
+                    else:
+                        converted_instr.append(int(self.__registers[operand]))
                 elif operand[:2] == '0x': #RAM
                     converted_instr.append(int(self.__bus['data'].get_ram_value_from(operand)))
                 elif operand in ['<','>','=']:
@@ -131,13 +137,18 @@ class CPU():
 
     def __lbl(self, label):
         self.__cache.map_label_to_addr(label, self.__instr_pointer)
+        self.__is_cache_saving = True
 
-    def __jmp(self, label, register_value, comparison_op, value):
+    def __jmp(self, label, register, comparison_op, value):
         if comparison_op is '=':
             comparison_op = '=='
-        
-        if eval(f'{register_value}{comparison_op}{value}'):
-            self.__instr_pointer = self.__cache.get_addr_on(label)
+
+        self.__is_cache_saving = False
+        while eval(f'{self.__registers[register]}{comparison_op}{value}'):
+            for key, instruction in self.__cache.memory.items():
+                instr = instruction.copy()
+                if instr[0] != 'jmp':
+                    self.__process_core(instr)
 
     def __check_for_overflow(self, number):
         if number >= (2 ** self.__arch):
