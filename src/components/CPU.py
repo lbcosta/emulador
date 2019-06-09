@@ -53,16 +53,18 @@ class CPU():
             self.__format_instruction()
             decoded_instr = self.__decoder.decode(self.__instruction)
 
-            print(color_format(f'>> Executing:   {instruction_format(decoded_instr)}', "BOLD"))
-
             self.__process_core(decoded_instr)
 
-    def __process_core(self, decoded_instr):
+    def __process_core(self, decoded_instr, loop=False):
         registers_before = self.__registers.copy()
-        operable_instr = self.__operand_conversion(decoded_instr)
+        operable_instr = self.__operand_conversion(decoded_instr.copy())
+
+        print(color_format(f">> Executing {color_format('(LOOP)', 'GREEN') if loop else ''}:   {instruction_format(decoded_instr)}", "BOLD"))
+
         #Salva na cache:
-        if self.__is_cache_saving:
-            self.__cache.push({ self.__instr_pointer : operable_instr })
+        if self.__is_cache_saving and not loop:
+            self.__cache.push({ self.__instr_pointer : decoded_instr.copy() })
+
         if operable_instr[0] == 'mov':
             self.__mov(operable_instr[1], operable_instr[2])
         elif operable_instr[0] == 'add':
@@ -148,7 +150,8 @@ class CPU():
             for key, instruction in self.__cache.memory.items():
                 instr = instruction.copy()
                 if instr[0] != 'jmp':
-                    self.__process_core(instr)
+                    print(color_format(f'\t\t\t\tAccessing cache...', 'YELLOW'))
+                    self.__process_core(instr, True)
 
     def __check_for_overflow(self, number):
         if number >= (2 ** self.__arch):
